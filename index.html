@@ -1,0 +1,1013 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ReadReflect - Your Book Review Journal</title>
+    <script src="https://js.puter.com/v2/"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Lora:wght@400;700&family=Open+Sans:wght@300;400;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #57c5b6;
+            --secondary-color: #1a5f7a;
+            --accent-color: #12e6c9;
+            --background-color: #1a1a1a;
+            --text-color: #f0f0f0;
+            --card-color: #2a2a2a;
+            --card-shadow: 0 4px 6px rgba(255, 255, 255, 0.1);
+            --card-hover-shadow: 0 6px 12px rgba(255, 255, 255, 0.15);
+        }
+
+        body {
+            font-family: 'Open Sans', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            font-size: 16px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px;
+        }
+
+        header,
+        footer {
+            background: linear-gradient(to right, var(--secondary-color), var(--primary-color));
+            color: var(--text-color);
+            text-align: center;
+            padding: 2em 0;
+        }
+
+        h1,
+        h2 {
+            font-family: 'Lora', serif;
+            margin-top: 0;
+        }
+
+        h1 {
+            font-size: 2.5em;
+        }
+
+        form,
+        .review {
+            background-color: var(--card-color);
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: var(--card-shadow);
+            margin-bottom: 2rem;
+            transition: box-shadow 0.3s ease;
+        }
+
+        form:hover,
+        .review:hover {
+            box-shadow: var(--card-hover-shadow);
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+        }
+
+        input,
+        textarea,
+        select {
+            width: 100%;
+            padding: 0.75rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid #555;
+            border-radius: 4px;
+            font-family: 'Open Sans', sans-serif;
+            font-size: 1em;
+            background-color: var(--card-color);
+            color: var(--text-color);
+        }
+
+        button {
+            background: linear-gradient(to right, var(--primary-color), var(--accent-color));
+            color: var(--background-color);
+            border: none;
+            padding: 0.75rem 1.5rem;
+            font-size: 1em;
+            cursor: pointer;
+            transition: opacity 0.3s ease;
+            border-radius: 4px;
+        }
+
+        button:hover {
+            opacity: 0.9;
+        }
+
+        .action-buttons {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 0;
+            margin: 0;
+        }
+
+        .search-container {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 0;
+            margin: 0 0 1rem 0;
+        }
+
+        .search-icon {
+            transform: translateY(-50%);
+            color: var(--text-color);
+            opacity: 0.7;
+        }
+
+        #searchInput {
+            padding: 0.75rem 0.75rem 0.75rem 2.5rem;
+            border: 1px solid #555;
+            border-radius: 4px;
+            background-color: var(--card-color);
+            color: var(--text-color);
+            font-size: 1em;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .sort-export-container {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .sort-container,
+        .export-container {
+            flex-basis: 48%;
+        }
+
+        #sortSelect {
+            appearance: none;
+            padding-right: 2rem;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23f0f0f0' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: calc(100% - 0.75rem) center;
+        }
+
+        .export-button {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .export-button i {
+            margin-right: 0.5rem;
+        }
+
+        #reviews {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .star-input {
+            font-size: 1.5em;
+            color: #ddd;
+            cursor: pointer;
+        }
+
+        .star-input.active {
+            color: var(--accent-color);
+        }
+
+        #contactButton {
+            background-color: var(--accent-color);
+            color: var(--background-color);
+            text-decoration: none;
+            padding: 0.5em 1em;
+            border-radius: 4px;
+            transition: opacity 0.3s ease;
+        }
+
+        #contactButton:hover {
+            opacity: 0.9;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.4);
+        }
+
+        .modal-content {
+            background-color: var(--card-color);
+            color: var(--text-color);
+            margin: 15% auto;
+            padding: 2rem;
+            border-radius: 8px;
+            max-width: 600px;
+            box-shadow: var(--card-shadow);
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: var(--text-color);
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        #aboutButton {
+            background: none;
+            border: none;
+            color: var(--text-color);
+            text-decoration: underline;
+            cursor: pointer;
+            font-size: 1em;
+            padding: 0;
+            margin-left: 1em;
+        }
+
+        .review-content {
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            margin-top: 1rem;
+            color: #bbb;
+        }
+
+        .review {
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .review-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .review-title {
+            font-size: 1.2em;
+            margin: 0;
+            color: var(--primary-color);
+        }
+
+        .review-author {
+            color: #999;
+            margin: 0.5rem 0;
+        }
+
+        .review-date {
+            font-size: 0.9em;
+            color: #777;
+            margin: 0.5rem 0;
+        }
+
+        .star-rating {
+            font-size: 1.2em;
+            color: #FFD700;
+            margin: 0.5rem 0;
+        }
+
+        .review-actions {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 1rem;
+        }
+
+        .review-actions button {
+            background: none;
+            border: none;
+            color: var(--primary-color);
+            cursor: pointer;
+            font-size: 1em;
+            padding: 0.5em;
+            margin-left: 1em;
+            transition: color 0.3s ease;
+        }
+
+        .review-actions button:hover {
+            color: var(--accent-color);
+        }
+
+        .review-content {
+            max-height: 4.8em;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        .review.expanded {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 1000;
+            background-color: var(--card-color);
+            overflow-y: auto;
+            padding: 2rem;
+        }
+
+        .review.expanded .review-content {
+            max-height: none;
+        }
+
+        .expand-button {
+            background: var(--primary-color);
+            color: var(--background-color);
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+
+        .close-button {
+            display: none;
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: var(--primary-color);
+            color: var(--background-color);
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+
+        .review.expanded .close-button {
+            display: block;
+        }
+
+        .review.expanded .expand-button {
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+
+            #reviews {
+                grid-template-columns: 1fr;
+            }
+
+            .sort-export-container {
+                flex-direction: column;
+            }
+
+            .sort-container,
+            .export-container {
+                flex-basis: 100%;
+                margin-bottom: 1rem;
+            }
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #555;
+            transition: .4s;
+            border-radius: 34px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: var(--text-color);
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked+.slider {
+            background-color: var(--accent-color);
+        }
+
+        input:checked+.slider:before {
+            transform: translateX(26px);
+        }
+
+        #sharingInfo {
+            margin-top: 10px;
+        }
+
+        #customSubdomainInput {
+            display: none;
+            margin-top: 10px;
+        }
+
+        #customSubdomainInput input {
+            width: 200px;
+            margin-right: 10px;
+            background-color: var(--card-color);
+            color: var(--text-color);
+            border: 1px solid #555;
+        }
+
+        #customSubdomainInput button {
+            padding: 5px 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>ReadReflect</h1>
+        <p>Your Puter Book Review Journal</p>
+        <button id="aboutButton">About ReadReflect</button>
+    </header>
+    <div class="container">
+        <section id="sharing-section">
+            <h2>Share Your Reviews</h2>
+            <label class="switch">
+                <input type="checkbox" id="sharingToggle">
+                <span class="slider"></span>
+            </label>
+            <span>Enable public sharing</span>
+            <div id="sharingInfo"></div>
+            <div id="customSubdomainInput">
+                <input type="text" id="customSubdomain" placeholder="Enter custom subdomain">
+                <button id="setCustomSubdomain">Set Custom Subdomain</button>
+            </div>
+        </section>
+
+        <section id="review-form">
+            <h2>Add New Review</h2>
+            <form id="reviewForm">
+                <input type="hidden" id="reviewId">
+                <label for="title">Book Title:</label>
+                <input type="text" id="title" required>
+                <label for="author">Author:</label>
+                <input type="text" id="author" required>
+                <label for="rating">Rating:</label>
+                <div id="starRating">
+                    <span class="star-input" data-value="1">☆</span>
+                    <span class="star-input" data-value="2">☆</span>
+                    <span class="star-input" data-value="3">☆</span>
+                    <span class="star-input" data-value="4">☆</span>
+                    <span class="star-input" data-value="5">☆</span>
+                </div>
+                <input type="hidden" id="rating" required>
+                <label for="content">Your Review:</label>
+                <textarea id="content" rows="5" required></textarea>
+                <button type="submit" id="submitButton">Add Review</button>
+                <button type="button" id="cancelButton" style="display:none;">Cancel Edit</button>
+            </form>
+        </section>
+
+        <section id="review-list">
+            <div class="action-buttons">
+                <div class="search-container">
+                    <!-- <i class="fas fa-search search-icon"></i> -->
+                    <input type="text" id="searchInput" placeholder="Search reviews...">
+                </div>
+                <div class="sort-export-container">
+                    <div class="sort-container">
+                        <select id="sortSelect">
+                            <option value="date">Sort by Date</option>
+                            <option value="rating">Sort by Rating</option>
+                            <option value="title">Sort by Title</option>
+                        </select>
+                    </div>
+                    <div class="export-container">
+                        <button id="exportButton" class="export-button">
+                            <i class="fas fa-file-export"></i>
+                            Export Reviews
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div id="reviews">
+                <p>No reviews found. Start by adding a new review!</p>
+            </div>
+        </section>
+    </div>
+
+    <div id="aboutModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>About ReadReflect</h2>
+            <p>ReadReflect is more than just a book review journal—it's a gateway to time travel through the written
+                word.</p>
+            <p>We believe that every book is a portal to another mind, another time, another world. When we read, we're
+                not just consuming words on a page; we're engaging in a profound dialogue with the author and all the
+                readers who came before us.</p>
+            <p>Writing reviews is our way of continuing this dialogue. It's how we process what we've learned, how we
+                connect the author's ideas to our own lives, and how we share these insights with others. In essence,
+                it's how we keep the conversation going across time and space.</p>
+            <p>Through ReadReflect, we invite you to:</p>
+            <ul>
+                <li>Capture your thoughts and feelings about the books you read</li>
+                <li>Reflect on the lessons and insights you've gained</li>
+                <li>Share your reflections with a community of fellow readers</li>
+                <li>Explore the reviews of others, gaining new perspectives on books you've read or discovering new ones
+                    to explore</li>
+            </ul>
+            <p>Remember, every review you write is a gift—to yourself, as you crystallize your thoughts, and to others,
+                as you offer them a glimpse into your reading journey.</p>
+            <p>Happy reading, and happy reflecting!</p>
+        </div>
+    </div>
+
+    <footer>
+        <a href="https://EverythingSings.art" id="contactButton" target="_blank">Contact Us</a>
+        <p id="versionInfo">Version 1.2.0</p>
+        <p>&copy; 2024 EverythingSings. All rights reserved.</p>
+        <p>This app is hosted on Puter. User data is stored in individual Puter accounts.</p>
+        <p>Users are responsible for the content of their reviews.</p>
+    </footer>
+
+    <script>
+        let currentSort = 'date';
+        let currentSearch = '';
+        let isSharing = false;
+        let publicSubdomain = '';
+
+        async function getUserInfo() {
+            try {
+                const user = await puter.auth.getUser();
+                return user.username;
+            } catch (error) {
+                console.error('Error fetching user info:', error);
+                return 'Anonymous User';
+            }
+        }
+
+        async function displayReviews() {
+            const reviewsDiv = document.getElementById('reviews');
+            reviewsDiv.innerHTML = '';
+
+            try {
+                let reviews = await puter.kv.list('review:*', true);
+                reviews = reviews.map(review => ({
+                    key: review.key,
+                    ...JSON.parse(review.value)
+                }));
+
+                reviews.sort((a, b) => {
+                    switch (currentSort) {
+                        case 'date':
+                            return b.key.split(':')[1] - a.key.split(':')[1];
+                        case 'rating':
+                            return b.rating - a.rating;
+                        case 'title':
+                            return a.title.localeCompare(b.title);
+                    }
+                });
+
+                reviews = reviews.filter(review =>
+                    review.title.toLowerCase().includes(currentSearch.toLowerCase()) ||
+                    review.author.toLowerCase().includes(currentSearch.toLowerCase()) ||
+                    review.content.toLowerCase().includes(currentSearch.toLowerCase())
+                );
+
+                reviews.forEach(reviewData => {
+                    const reviewElement = document.createElement('div');
+                    reviewElement.className = 'review';
+                    const reviewDate = new Date(parseInt(reviewData.key.split(':')[1]));
+                    reviewElement.innerHTML = `
+                        <div class="review-header">
+                            <div>
+                                <h3 class="review-title">${reviewData.title || 'Untitled'}</h3>
+                                <p class="review-author">by ${reviewData.author || 'Unknown'}</p>
+                                <p class="review-date">${reviewDate.toLocaleDateString()}</p>
+                                <p class="star-rating">${'★'.repeat(reviewData.rating)}${'☆'.repeat(5 - reviewData.rating)}</p>
+                            </div>
+                        </div>
+                        <pre class="review-content">${reviewData.content || 'No review content'}</pre>
+                        <button class="close-button">Close</button>
+                        <div class="review-actions">
+                            <button class="expand-button"><i class="fa-solid fa-eye"></i> Read More</button>
+                            <button onclick="editReview('${reviewData.key}')"><i class="fas fa-edit"></i> Edit</button>
+                            <button onclick="deleteReview('${reviewData.key}')"><i class="fas fa-trash-alt"></i> Delete</button>
+                        </div>
+                    `;
+                    reviewsDiv.appendChild(reviewElement);
+
+                    const expandButton = reviewElement.querySelector('.expand-button');
+                    const closeButton = reviewElement.querySelector('.close-button');
+
+                    expandButton.addEventListener('click', () => {
+                        reviewElement.classList.add('expanded');
+                    });
+
+                    closeButton.addEventListener('click', () => {
+                        reviewElement.classList.remove('expanded');
+                    });
+                });
+
+                if (reviews.length === 0) {
+                    reviewsDiv.innerHTML = '<p>No reviews found. Start by adding a new review!</p>';
+                }
+
+                if (isSharing) {
+                    await updatePublicPage();
+                }
+            } catch (error) {
+                console.error('Error fetching reviews:', error);
+                reviewsDiv.innerHTML = '<p>Error loading reviews. Please try again.</p>';
+            }
+        }
+
+        async function handleReviewSubmit(event) {
+            event.preventDefault();
+            const reviewId = document.getElementById('reviewId').value;
+            const title = document.getElementById('title').value.trim();
+            const author = document.getElementById('author').value.trim();
+            const rating = document.getElementById('rating').value;
+            const content = document.getElementById('content').value.trim().replace(/\n+/g, '\n').replace(/^\n|\n$/g, '');
+
+            const reviewData = {
+                title,
+                author,
+                rating: parseInt(rating),
+                content
+            };
+
+            try {
+                if (reviewId) {
+                    await puter.kv.set(reviewId, JSON.stringify(reviewData));
+                } else {
+                    const newReviewId = 'review:' + Date.now();
+                    await puter.kv.set(newReviewId, JSON.stringify(reviewData));
+                }
+
+                resetForm();
+                await displayReviews();
+            } catch (error) {
+                console.error('Error saving review:', error);
+                alert('Error saving review. Please try again.');
+            }
+        }
+
+        async function editReview(key) {
+            try {
+                const reviewJson = await puter.kv.get(key);
+                const review = JSON.parse(reviewJson);
+
+                document.getElementById('reviewId').value = key;
+                document.getElementById('title').value = review.title;
+                document.getElementById('author').value = review.author;
+                setStarRating(review.rating);
+                document.getElementById('content').value = review.content;
+
+                document.getElementById('submitButton').textContent = 'Update Review';
+                document.getElementById('cancelButton').style.display = 'inline-block';
+            } catch (error) {
+                console.error('Error editing review:', error);
+                alert('Error editing review. Please try again.');
+            }
+        }
+
+        async function deleteReview(key) {
+            if (confirm('Are you sure you want to delete this review?')) {
+                try {
+                    await puter.kv.del(key);
+                    await displayReviews();
+                } catch (error) {
+                    console.error('Error deleting review:', error);
+                    alert('Error deleting review. Please try again.');
+                }
+            }
+        }
+
+        function resetForm() {
+            document.getElementById('reviewForm').reset();
+            document.getElementById('reviewId').value = '';
+            setStarRating(0);
+            document.getElementById('submitButton').textContent = 'Add Review';
+            document.getElementById('cancelButton').style.display = 'none';
+        }
+
+        async function exportReviews() {
+            try {
+                const reviews = await puter.kv.list('review:*', true);
+                const reviewsData = reviews.map(review => {
+                    return {
+                        id: review.key,
+                        ...JSON.parse(review.value)
+                    };
+                });
+
+                const jsonContent = JSON.stringify(reviewsData, null, 2);
+                const blob = new Blob([jsonContent], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'readreflect_reviews.json';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            } catch (error) {
+                console.error('Error exporting reviews:', error);
+                alert('Error exporting reviews. Please try again.');
+            }
+        }
+
+        function setStarRating(rating) {
+            const stars = document.querySelectorAll('.star-input');
+            stars.forEach((star, index) => {
+                star.textContent = index < rating ? '★' : '☆';
+                star.classList.toggle('active', index < rating);
+            });
+            document.getElementById('rating').value = rating;
+        }
+
+        async function toggleSharing() {
+            const sharingToggle = document.getElementById('sharingToggle');
+            const sharingInfo = document.getElementById('sharingInfo');
+            const customSubdomainInput = document.getElementById('customSubdomainInput');
+
+            isSharing = sharingToggle.checked;
+
+            if (isSharing) {
+                customSubdomainInput.style.display = 'block';
+                sharingInfo.innerHTML = 'Enter a custom subdomain to enable sharing.';
+            } else {
+                try {
+                    // Delete the subdomain and directory
+                    if (publicSubdomain) {
+                        const subdomain = publicSubdomain.split('//')[1].split('.')[0];
+                        try {
+                            await puter.hosting.delete(subdomain);
+                            console.log(`Subdomain ${subdomain} deleted successfully.`);
+                        } catch (error) {
+                            console.error(`Error deleting subdomain ${subdomain}:`, error);
+                        }
+
+                        try {
+                            await puter.fs.delete(`public-${subdomain}`, { recursive: true });
+                            console.log(`Directory public-${subdomain} deleted successfully.`);
+                        } catch (error) {
+                            console.error(`Error deleting directory public-${subdomain}:`, error);
+                        }
+
+                        publicSubdomain = '';
+                    }
+                    sharingInfo.innerHTML = 'Sharing is disabled.';
+                    customSubdomainInput.style.display = 'none';
+                } catch (error) {
+                    console.error('Error disabling sharing:', error);
+                    alert('Error disabling sharing. Some resources may not have been fully cleaned up.');
+                }
+            }
+
+            try {
+                await puter.kv.set('sharing_status', JSON.stringify({ isSharing, publicSubdomain }));
+                console.log('Sharing status saved successfully.');
+            } catch (error) {
+                console.error('Error saving sharing status:', error);
+                alert('Error saving sharing status. Your preference may not persist after reload.');
+            }
+        }
+
+        async function setCustomSubdomain() {
+            const customSubdomain = document.getElementById('customSubdomain').value.trim().toLowerCase();
+            const sharingInfo = document.getElementById('sharingInfo');
+
+            if (!customSubdomain) {
+                alert('Please enter a valid subdomain.');
+                return;
+            }
+
+            try {
+                const username = await getUserInfo();
+                const dirName = `public-${customSubdomain}`;
+
+                try {
+                    await puter.hosting.get(customSubdomain);
+                    alert('This subdomain is already in use. Please choose another one.');
+                    return;
+                } catch (error) {
+                    console.error(error);
+                }
+
+                await puter.fs.mkdir(dirName);
+
+                const publicHtml = await generatePublicHtml();
+                await puter.fs.write(`${dirName}/index.html`, publicHtml);
+
+                const site = await puter.hosting.create(customSubdomain, dirName);
+                publicSubdomain = `https://${site.subdomain}.puter.site`;
+
+                sharingInfo.innerHTML = `${username}'s reviews are now public at: <a href="${publicSubdomain}" target="_blank">${publicSubdomain}</a>`;
+
+                await puter.kv.set('sharing_status', JSON.stringify({ isSharing: true, publicSubdomain }));
+            } catch (error) {
+                console.error('Error setting custom subdomain:', error);
+                alert('Error setting custom subdomain. Please try again.');
+            }
+        }
+
+        async function generatePublicHtml() {
+            const reviews = await puter.kv.list('review:*', true);
+            const reviewsData = reviews.map(review => ({
+                key: review.key,
+                ...JSON.parse(review.value)
+            }));
+
+            const username = await getUserInfo();
+
+            let reviewsHtml = reviewsData.map(review => `
+        <div class="review">
+            <div class="review-header">
+                <div>
+                    <h3 class="review-title">${review.title || 'Untitled'}</h3>
+                    <p class="review-author">by ${review.author || 'Unknown'}</p>
+                    <p class="review-date">${new Date(parseInt(review.key.split(':')[1])).toLocaleDateString()}</p>
+                    <p class="star-rating">${'★'.repeat(review.rating)}${'☆'.repeat(5 - review.rating)}</p>
+                </div>
+            </div>
+            <pre class="review-content">${review.content || 'No review content'}</pre>
+        </div>
+        `).join('');
+
+            return `
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>ReadReflect - ${username}'s Public Reviews</title>
+            <style>
+                body {
+                    font-family: 'Open Sans', sans-serif;
+                    line-height: 1.6;
+                    color: #f0f0f0;
+                    max-width: 800px;
+                    margin: 0 auto;
+                    padding: 20px;
+                    background-color: #1a1a1a;
+                }
+                h1, h2, h3 {
+                    font-family: 'Lora', serif;
+                }
+                .review {
+                    background-color: #2a2a2a;
+                    border: 1px solid #555;
+                    border-radius: 8px;
+                    padding: 20px;
+                    margin-bottom: 20px;
+                    box-shadow: 0 2px 4px rgba(255, 255, 255, 0.1);
+                }
+                .review-title {
+                    color: #57c5b6;
+                    margin: 0 0 10px 0;
+                }
+                .review-author {
+                    color: #999;
+                    margin: 0;
+                }
+                .review-date {
+                    color: #777;
+                    font-size: 0.9em;
+                    margin: 5px 0;
+                }
+                .star-rating {
+                    color: #FFD700;
+                    font-size: 1.2em;
+                    margin: 10px 0;
+                }
+                .review-content {
+                    white-space: pre-wrap;
+                    word-wrap: break-word;
+                    margin-top: 15px;
+                    color: #bbb;
+                }
+            </style>
+        </head>
+        <body>
+            <header>
+                <a href="https://puter.com/app/ReadReflect"><h1>ReadReflect</h1></a>
+                <p>${username}'s Public Book Reviews</p>
+            </header>
+            <main>
+                ${reviewsHtml}
+            </main>
+            <footer>
+                <a href="https://www.linktr.ee/EverythingSings" id="contactButton" target="_blank">Contact Us</a>
+            </footer>
+        </body>
+        </html>
+        `;
+        }
+
+        async function updatePublicPage() {
+            if (isSharing && publicSubdomain) {
+                const subdomain = publicSubdomain.split('//')[1].split('.')[0];
+                const dirName = `public-${subdomain}`;
+                const publicHtml = await generatePublicHtml();
+                await puter.fs.write(`${dirName}/index.html`, publicHtml);
+            }
+        }
+
+        async function initializeSharing() {
+            const sharingStatus = await puter.kv.get('sharing_status');
+            if (sharingStatus) {
+                const { isSharing: savedIsSharing, publicSubdomain: savedPublicSubdomain } = JSON.parse(sharingStatus);
+                isSharing = savedIsSharing;
+                publicSubdomain = savedPublicSubdomain;
+
+                const sharingToggle = document.getElementById('sharingToggle');
+                const sharingInfo = document.getElementById('sharingInfo');
+                const customSubdomainInput = document.getElementById('customSubdomainInput');
+
+                sharingToggle.checked = isSharing;
+                if (isSharing && publicSubdomain) {
+                    const username = await getUserInfo();
+                    sharingInfo.innerHTML = `${username}'s reviews are public at: <a href="${publicSubdomain}" target="_blank">${publicSubdomain}</a>`;
+                    customSubdomainInput.style.display = 'block';
+                } else {
+                    sharingInfo.innerHTML = 'Sharing is disabled.';
+                    customSubdomainInput.style.display = 'none';
+                }
+            }
+        }
+
+        document.getElementById('reviewForm').addEventListener('submit', handleReviewSubmit);
+        document.getElementById('cancelButton').addEventListener('click', resetForm);
+        document.getElementById('exportButton').addEventListener('click', exportReviews);
+        document.getElementById('sharingToggle').addEventListener('change', toggleSharing);
+        document.getElementById('setCustomSubdomain').addEventListener('click', setCustomSubdomain);
+
+        document.getElementById('starRating').addEventListener('click', (event) => {
+            if (event.target.classList.contains('star-input')) {
+                const rating = parseInt(event.target.dataset.value);
+                setStarRating(rating);
+            }
+        });
+
+        document.getElementById('searchInput').addEventListener('input', (event) => {
+            currentSearch = event.target.value;
+            displayReviews();
+        });
+
+        document.getElementById('sortSelect').addEventListener('change', (event) => {
+            currentSort = event.target.value;
+            displayReviews();
+        });
+
+        const modal = document.getElementById("aboutModal");
+        const btn = document.getElementById("aboutButton");
+        const span = document.getElementsByClassName("close")[0];
+
+        btn.onclick = function () {
+            modal.style.display = "block";
+        }
+
+        span.onclick = function () {
+            modal.style.display = "none";
+        }
+
+        window.onclick = function (event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+
+        displayReviews();
+        initializeSharing();
+    </script>
+</body>
+
+</html>
